@@ -4,4 +4,4 @@ User-agent: *
 Allow: /
 
 # Sitemap declaration
-Sitemap: https://toolsphere.app/sitemap.xml
+Sitemap: https://toolsphere-ten.vercel.app/sitemap.xml
