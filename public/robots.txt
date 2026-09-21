@@ -1,0 +1,7 @@
+# robots.txt for ToolSphere
+# Allow all search engine crawlers (Google, Bing, Yahoo, DuckDuckGo, Baidu, Yandex)
+User-agent: *
+Allow: /
+
+# Sitemap declaration
+Sitemap: https://toolsphere.app/sitemap.xml
