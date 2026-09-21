@@ -53,7 +53,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     if (raw === 'pdf' || raw === 'utilities' || raw === 'dev' || raw === 'favorites') {
       return { view: 'category' as AppView, toolId: null, category: raw };
     }
-    const matchingTool = TOOLS.find(t => t.id === raw);
+    let cleanId = raw;
+    if (cleanId === 'ppt-to-pdf') cleanId = 'powerpoint-to-pdf';
+    if (cleanId === 'pdf-to-ppt') cleanId = 'pdf-to-powerpoint';
+    const matchingTool = TOOLS.find(t => t.id === cleanId);
     if (matchingTool) {
       return { view: 'tool' as AppView, toolId: matchingTool.id, category: matchingTool.category };
     }
@@ -155,13 +158,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const navigateToTool = (toolId: string) => {
-    const tool = TOOLS.find(t => t.id === toolId);
+    let cleanId = toolId;
+    if (cleanId === 'ppt-to-pdf') cleanId = 'powerpoint-to-pdf';
+    if (cleanId === 'pdf-to-ppt') cleanId = 'pdf-to-powerpoint';
+    const tool = TOOLS.find(t => t.id === cleanId);
     if (tool) {
       setCurrentView('tool');
-      setActiveToolIdState(toolId);
+      setActiveToolIdState(cleanId);
       setActiveCategoryState(tool.category);
-      window.location.hash = toolId;
-      addRecentTool(toolId);
+      window.location.hash = cleanId;
+      addRecentTool(cleanId);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };

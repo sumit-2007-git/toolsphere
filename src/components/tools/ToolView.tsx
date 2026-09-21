@@ -125,11 +125,15 @@ export const ToolView: React.FC = () => {
       case 'pdf-to-text': return <PdfToText />;
       case 'crop-pdf': return <CropPdf />;
       case 'word-to-pdf': return <WordToPdf />;
-      case 'powerpoint-to-pdf': return <PowerPointToPdf />;
+      case 'powerpoint-to-pdf':
+      case 'ppt-to-pdf':
+        return <PowerPointToPdf />;
       case 'excel-to-pdf': return <ExcelToPdf />;
       case 'html-to-pdf': return <HtmlToPdf />;
       case 'pdf-to-word': return <PdfToWord />;
-      case 'pdf-to-powerpoint': return <PdfToPowerpoint />;
+      case 'pdf-to-powerpoint':
+      case 'pdf-to-ppt':
+        return <PdfToPowerpoint />;
       case 'pdf-to-excel': return <PdfToExcel />;
       case 'pdf-to-pdfa': return <PdfToPdfa />;
 

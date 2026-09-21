@@ -193,7 +193,7 @@ export const Navbar: React.FC = () => {
   const pdfConvertToTools = [
     { id: 'jpg-to-pdf', name: 'JPG to PDF', desc: 'Transform JPG, PNG images to PDF', icon: FileImage, color: 'text-amber-600 dark:text-amber-400', bg: 'bg-amber-50 dark:bg-amber-950/70' },
     { id: 'word-to-pdf', name: 'WORD to PDF', desc: 'Convert DOCX files directly', icon: FileText, color: 'text-blue-600 dark:text-blue-400', bg: 'bg-blue-50 dark:bg-blue-950/70' },
-    { id: 'ppt-to-pdf', name: 'POWERPOINT to PDF', desc: 'Turn presentation slides to PDF', icon: Presentation, color: 'text-orange-600 dark:text-orange-400', bg: 'bg-orange-50 dark:bg-orange-950/70' },
+    { id: 'powerpoint-to-pdf', name: 'POWERPOINT to PDF', desc: 'Turn presentation slides to PDF', icon: Presentation, color: 'text-orange-600 dark:text-orange-400', bg: 'bg-orange-50 dark:bg-orange-950/70' },
     { id: 'excel-to-pdf', name: 'EXCEL to PDF', desc: 'Convert tables & spreadsheets', icon: Table, color: 'text-emerald-600 dark:text-emerald-400', bg: 'bg-emerald-50 dark:bg-emerald-950/70' },
     { id: 'html-to-pdf', name: 'HTML to PDF', desc: 'Render web HTML into PDF document', icon: FileCode, color: 'text-purple-600 dark:text-purple-400', bg: 'bg-purple-50 dark:bg-purple-950/70' },
     { id: 'text-to-pdf', name: 'Text to PDF', desc: 'Plain text notes to styled PDF', icon: FileText, color: 'text-slate-600 dark:text-slate-400', bg: 'bg-slate-100 dark:bg-slate-800' },
@@ -203,7 +203,7 @@ export const Navbar: React.FC = () => {
   const pdfConvertFromTools = [
     { id: 'pdf-to-jpg', name: 'PDF to JPG', desc: 'Extract pages as crisp images', icon: Image, color: 'text-amber-600 dark:text-amber-400', bg: 'bg-amber-50 dark:bg-amber-950/70' },
     { id: 'pdf-to-word', name: 'PDF to WORD', desc: 'Convert to editable Word DOCX', icon: FileText, color: 'text-blue-600 dark:text-blue-400', bg: 'bg-blue-50 dark:bg-blue-950/70' },
-    { id: 'pdf-to-ppt', name: 'PDF to POWERPOINT', desc: 'Convert to editable slide deck', icon: Presentation, color: 'text-orange-600 dark:text-orange-400', bg: 'bg-orange-50 dark:bg-orange-950/70' },
+    { id: 'pdf-to-powerpoint', name: 'PDF to POWERPOINT', desc: 'Convert to editable slide deck', icon: Presentation, color: 'text-orange-600 dark:text-orange-400', bg: 'bg-orange-50 dark:bg-orange-950/70' },
     { id: 'pdf-to-excel', name: 'PDF to EXCEL', desc: 'Extract data to Excel sheets', icon: Table, color: 'text-emerald-600 dark:text-emerald-400', bg: 'bg-emerald-50 dark:bg-emerald-950/70' },
     { id: 'pdf-to-text', name: 'PDF to Text', desc: 'Extract all readable text', icon: FileText, color: 'text-slate-600 dark:text-slate-400', bg: 'bg-slate-100 dark:bg-slate-800' },
     { id: 'protect-pdf', name: 'Protect PDF', desc: 'Encrypt document with password', icon: Lock, color: 'text-rose-600 dark:text-rose-400', bg: 'bg-rose-50 dark:bg-rose-950/70' },
