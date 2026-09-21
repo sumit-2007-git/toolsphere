@@ -44,7 +44,7 @@ export const PdfToWord: React.FC = () => {
         paragraphs.push(...pageLines);
       }
 
-      // Generate genuine .docx ZIP package
+      // Generate standard, valid .docx ZIP package
       const zip = new JSZip();
 
       // [Content_Types].xml
@@ -55,6 +55,7 @@ export const PdfToWord: React.FC = () => {
   <Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
   <Default Extension="xml" ContentType="application/xml"/>
   <Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>
+  <Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/>
 </Types>`
       );
 
@@ -67,22 +68,60 @@ export const PdfToWord: React.FC = () => {
 </Relationships>`
       );
 
+      // word/_rels/document.xml.rels
+      zip.folder('word/_rels')?.file(
+        'document.xml.rels',
+        `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+  <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>
+</Relationships>`
+      );
+
+      // word/styles.xml
+      zip.folder('word')?.file(
+        'styles.xml',
+        `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+  <w:docDefaults>
+    <w:rPrDefault>
+      <w:rPr>
+        <w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/>
+        <w:sz w:val="22"/>
+        <w:color w:val="222222"/>
+      </w:rPr>
+    </w:rPrDefault>
+  </w:docDefaults>
+</w:styles>`
+      );
+
       // word/document.xml
       const pXml = paragraphs
-        .map(
-          (p) =>
-            `<w:p><w:r><w:t xml:space="preserve">${p
-              .replace(/&/g, '&amp;')
-              .replace(/</g, '&lt;')
-              .replace(/>/g, '&gt;')}</w:t></w:r></w:p>`
-        )
+        .map((p) => {
+          const isPageDivider = p.startsWith('--- Page ');
+          const safeText = p
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;');
+
+          if (isPageDivider) {
+            return `<w:p><w:pPr><w:jc w:val="center"/></w:pPr><w:r><w:rPr><w:b/><w:color w:val="0066CC"/><w:sz w:val="24"/></w:rPr><w:t xml:space="preserve">${safeText}</w:t></w:r></w:p>`;
+          }
+
+          return `<w:p><w:r><w:t xml:space="preserve">${safeText}</w:t></w:r></w:p>`;
+        })
         .join('');
 
       zip.folder('word')?.file(
         'document.xml',
         `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
-  <w:body>${pXml}</w:body>
+  <w:body>
+    ${pXml}
+    <w:sectPr>
+      <w:pgSz w:w="12240" w:h="15840"/>
+      <w:pgMar w:top="1440" w:right="1440" w:bottom="1440" w:left="1440"/>
+    </w:sectPr>
+  </w:body>
 </w:document>`
       );
 
@@ -92,7 +131,7 @@ export const PdfToWord: React.FC = () => {
       });
 
       setDocxBlob(blob);
-      addToast('success', 'PDF converted to editable DOCX!');
+      addToast('success', 'PDF converted to standard editable DOCX!');
     } catch (err: any) {
       console.error(err);
       addToast('error', 'Conversion failed', err.message);
@@ -120,7 +159,7 @@ export const PdfToWord: React.FC = () => {
             setDocxBlob(null);
           }}
           title="Upload PDF to convert to Word (DOCX)"
-          subtitle="Extract text and format into an editable Word document"
+          subtitle="Generate clean, fully editable Word document"
           buttonLabel="Select PDF File"
         />
       </div>
@@ -141,7 +180,7 @@ export const PdfToWord: React.FC = () => {
             <button
               type="button"
               onClick={handleDownload}
-              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl font-bold text-white bg-emerald-600 hover:bg-emerald-500 shadow-md shadow-emerald-500/20 text-sm transition-all"
+              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl font-bold text-white bg-emerald-600 hover:bg-emerald-500 shadow-md shadow-emerald-500/20 text-sm transition-all cursor-pointer"
             >
               <Download className="w-4 h-4" />
               <span>Download DOCX</span>
@@ -151,12 +190,12 @@ export const PdfToWord: React.FC = () => {
               type="button"
               onClick={handleConvert}
               disabled={isProcessing}
-              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl font-bold text-white bg-brand-600 hover:bg-brand-500 shadow-md shadow-brand-500/20 text-sm transition-all disabled:opacity-50"
+              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl font-bold text-white bg-brand-600 hover:bg-brand-500 shadow-md shadow-brand-500/20 text-sm transition-all disabled:opacity-50 cursor-pointer"
             >
               {isProcessing ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  <span>Converting to DOCX...</span>
+                  <span>Converting Document...</span>
                 </>
               ) : (
                 <>

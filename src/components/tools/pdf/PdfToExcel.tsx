@@ -40,6 +40,10 @@ export const PdfToExcel: React.FC = () => {
         if (currentLine) rows.push(currentLine.split('\t'));
       }
 
+      const rowCount = Math.max(rows.length, 1);
+      const colCount = Math.max(...rows.map((r) => r.length), 1);
+      const lastColLetter = String.fromCharCode(65 + Math.min(colCount - 1, 25));
+
       // Generate genuine .xlsx ZIP archive
       const zip = new JSZip();
 
@@ -87,7 +91,17 @@ export const PdfToExcel: React.FC = () => {
             .map((cell, cIdx) => {
               const colLetter = String.fromCharCode(65 + (cIdx % 26));
               const ref = `${colLetter}${rIdx + 1}`;
-              const safeText = cell.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+              const trimmed = cell.trim();
+              const isNum = trimmed !== '' && !isNaN(Number(trimmed));
+
+              if (isNum) {
+                return `<c r="${ref}"><v>${trimmed}</v></c>`;
+              }
+
+              const safeText = cell
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
               return `<c r="${ref}" t="inlineStr"><is><t>${safeText}</t></is></c>`;
             })
             .join('');
@@ -98,7 +112,12 @@ export const PdfToExcel: React.FC = () => {
       zip.folder('xl/worksheets')?.file(
         'sheet1.xml',
         `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
+<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
+  <dimension ref="A1:${lastColLetter}${rowCount}"/>
+  <sheetViews>
+    <sheetView tabSelected="1" workbookViewId="0"/>
+  </sheetViews>
+  <sheetFormatPr defaultRowHeight="15"/>
   <sheetData>${rowXml}</sheetData>
 </worksheet>`
       );
@@ -137,7 +156,7 @@ export const PdfToExcel: React.FC = () => {
             setXlsxBlob(null);
           }}
           title="Upload PDF to convert to Excel (XLSX)"
-          subtitle="Extract financial figures and tabular rows into a spreadsheet"
+          subtitle="Extract structured tabular data straight into spreadsheet cells"
           buttonLabel="Select PDF File"
         />
       </div>
@@ -158,7 +177,7 @@ export const PdfToExcel: React.FC = () => {
             <button
               type="button"
               onClick={handleDownload}
-              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl font-bold text-white bg-emerald-600 hover:bg-emerald-500 shadow-md shadow-emerald-500/20 text-sm transition-all"
+              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl font-bold text-white bg-emerald-600 hover:bg-emerald-500 shadow-md shadow-emerald-500/20 text-sm transition-all cursor-pointer"
             >
               <Download className="w-4 h-4" />
               <span>Download XLSX</span>
@@ -168,7 +187,7 @@ export const PdfToExcel: React.FC = () => {
               type="button"
               onClick={handleConvert}
               disabled={isProcessing}
-              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl font-bold text-white bg-brand-600 hover:bg-brand-500 shadow-md shadow-brand-500/20 text-sm transition-all disabled:opacity-50"
+              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl font-bold text-white bg-brand-600 hover:bg-brand-500 shadow-md shadow-brand-500/20 text-sm transition-all disabled:opacity-50 cursor-pointer"
             >
               {isProcessing ? (
                 <>
